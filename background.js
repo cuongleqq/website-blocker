@@ -10,14 +10,50 @@ const inWindow = (winList, now = new Date()) => {
   return winList.some(([hStart, hEnd]) => m >= hStart * 60 && m < hEnd * 60);
 };
 
+function matches(url, pattern) {
+  // Escape everything that has special meaning in a regex
+  // except the wildcard characters * and ?
+  const esc = pattern.replace(/[-\/\\^$+?.()|[\]{}]/g, "\\$&");
+
+  // Replace wildcards:
+  //   *  →  .*
+  //   ?  →  .
+  const regexStr = "^" + esc.replace(/\*/g, ".*").replace(/\?/g, ".") + "$";
+
+  try {
+    return new RegExp(regexStr).test(url);
+  } catch (err) {
+    console.error("Bad pattern → regex:", pattern, regexStr, err);
+    return false;
+  }
+}
+
+async function sweepOpenTabs(patterns) {
+  const tabs = await chrome.tabs.query({});
+  console.log("tabs", tabs);
+  console.log("patterns", patterns);
+  for (const t of tabs) {
+    if (patterns.some((p) => matches(t.url || "", p))) {
+      console.log("redirecting", t.id);
+      chrome.tabs.update(t.id, { url: REDIRECT_URL });
+    }
+  }
+}
+
 /* ------------ rule builder ------------ */
 async function rebuildRules() {
+  console.log("rebuildRules");
   const { [CONFIG_KEY]: cfg = { patterns: [], schedule: {} } } =
     await chrome.storage.local.get(CONFIG_KEY);
+
+  console.log("cfg", cfg);
 
   const today = dayKey();
   const windows = cfg.schedule?.[today] ?? [];
   const active = inWindow(windows);
+
+  console.log("windows", windows);
+  console.log("active", active);
 
   // remove old rules first
   const old = await chrome.declarativeNetRequest.getDynamicRules();
@@ -32,6 +68,8 @@ async function rebuildRules() {
         }))
       : [],
   });
+
+  if (active) sweepOpenTabs(cfg.patterns);
 }
 
 /* ------------ lifecycle ------------ */

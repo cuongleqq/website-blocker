@@ -8,7 +8,8 @@
     "storage",
     "alarms",
     "declarativeNetRequest",
-    "declarativeNetRequestWithHostAccess"
+    "declarativeNetRequestWithHostAccess",
+    "tabs"
   ],
   "host_permissions": ["<all_urls>"],
 
