@@ -1,0 +1,25 @@
+{
+  "name": "Scheduled Site Blocker",
+  "description": "Block distracting sites on a day-time schedule.",
+  "version": "1.0",
+  "manifest_version": 3,
+
+  "permissions": [
+    "storage",
+    "alarms",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess"
+  ],
+  "host_permissions": ["<all_urls>"],
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+
+  "options_page": "options.html",
+
+  "action": {
+    "default_title": "Site Blocker"
+  }
+}

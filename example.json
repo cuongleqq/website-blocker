@@ -1,20 +1,3 @@
-# website-blocker
-
-A simple website blocker (200 LoC) extension on Chrome that I use for myself
-
-## How to use
-
-Load the extension by
-
-```
-Chrome settings > Extensions > Manage extensions  > Load unpacked
-Choose the repo folder
-```
-
-Edit the settings (Right click on the extension icon, or the three dots besides it, choose Options) with this examples:
-(Edit websites and timing as you like)
-
-```json
 {
   "patterns": [
     "*://vnexpress.net/*",
@@ -53,4 +36,3 @@ Edit the settings (Right click on the extension icon, or the three dots besides 
     ]
   }
 }
-```
